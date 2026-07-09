@@ -9,7 +9,8 @@
   <textarea id="prompt" rows="4" cols="50"></textarea><br>
   <button onclick="sendPrompt()">Send</button>
   <pre id="output"></pre>
-
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
   <script>
     async function sendPrompt() {
       const prompt = document.getElementById("prompt").value;
