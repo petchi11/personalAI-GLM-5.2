@@ -4,11 +4,18 @@
   <meta charset="UTF-8">
   <title>GLM-5.2 Streaming </title>
   <style>
-    #loader {
+    .loader-container {
       display: flex;
-      gap: 5px;
+      align-items: center;
+      gap: 10px;
       margin: 10px 0;
     }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+    }
+
     .dot {
       width: 8px;
       height: 8px;
@@ -16,17 +23,21 @@
       border-radius: 50%;
       animation: bounce 0.6s infinite alternate;
     }
-    .dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
     @keyframes bounce {
       from { transform: translateY(0); opacity: 0.5; }
       to   { transform: translateY(-6px); opacity: 1; }
     }
-</style>
+
+    .thinking-text {
+      font-style: italic;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
 
 </head>
 <body>
@@ -34,13 +45,18 @@
   <textarea id="prompt" rows="4" cols="50"></textarea><br>
   <button onclick="sendPrompt()">Send</button>
   
-  <div id="loader" style="display:none;">
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span> 
+  <div id="loader" style="display:none;" class="loader-container">
+    <div class="dots">
+     <span class="dot"></span>
+     <span class="dot"></span>
+     <span class="dot"></span>
+    </div>
+    <span class="thinking-text">Thinking...</span>
   </div>
 
-  <div id="output" style="overflow-y:visible; background:#fafafa; border:1px solid #ccc; padding:10px;"></div>
+<div id="output"
+    style="display:none; overflow-y:visible; background:#fafafa;
+    border:1px solid #ccc; padding:10px;"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -51,6 +67,7 @@
       const prompt = document.getElementById("prompt").value;
       const output = document.getElementById("output");
       output.textContent = "";
+      output.style.display = "none"; // hide output initially
       loader.style.display = "flex"; // show loader
       
       try {
@@ -99,6 +116,7 @@
         }
 
         loader.style.display = "none"; // hide loader once response starts typing
+        output.style.display = "block"; // show output when typing starts
 
         // Typing effect
         const typingDelay = 10;
@@ -129,6 +147,8 @@
 
 
       } catch (err) {
+        loader.style.display = "none";
+        output.style.display = "block";
         output.textContent = `❌ Error: ${err.message}`;
         console.error("Frontend error:", err);
       }
