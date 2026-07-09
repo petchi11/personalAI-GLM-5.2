@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GLM-5.2 Streaming Demo</title>
+</head>
+<body>
+  <h1>Ask GLM‑5.2</h1>
+  <textarea id="prompt" rows="4" cols="50"></textarea><br>
+  <button onclick="sendPrompt()">Send</button>
+  <pre id="output"></pre>
+
+  <script>
+    function sendPrompt() {
+      const prompt = document.getElementById("prompt").value;
+      const output = document.getElementById("output");
+      output.textContent = "";
+
+      const eventSource = new EventSource("/api/chat", {
+        withCredentials: false
+      });
+
+      // Send prompt via POST first
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "z-ai/glm-5.2",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 1,
+          top_p: 1,
+          max_tokens: 16384,
+          seed: 42,
+          stream: true
+        })
+      });
+
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.choices && data.choices[0].delta?.content) {
+            output.textContent += data.choices[0].delta.content;
+          }
+        } catch (e) {
+          console.log("Non-JSON chunk:", event.data);
+        }
+      };
+
+      eventSource.onerror = (err) => {
+        console.error("Stream error:", err);
+        eventSource.close();
+      };
+    }
+  </script>
+</body>
+</html>
