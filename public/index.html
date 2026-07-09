@@ -8,7 +8,7 @@
   <h1>Ask GLM‑5.2 Model</h1>
   <textarea id="prompt" rows="4" cols="50"></textarea><br>
   <button onclick="sendPrompt()">Send</button>
-  <pre id="output"></pre>
+  <div id="output" style="max-height:300px; overflow-y:auto;"></div>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
@@ -62,31 +62,21 @@
           });
         }
 
-        function typeOutText(text, outputElement, delay = 30) {
-            let i = 0;
-            outputElement.textContent = "";
+        // Typing effect
+        const typingDelay = 20;
+        let i = 0;
+        output.textContent = "";
+        
+        const interval = setInterval(() => {
+            output.textContent += buffer[i];
+            output.scrollTop = output.scrollHeight;
+            i++;
             
-            const interval = setInterval(() => {
-                outputElement.textContent += text[i];
-                i++;
-    
-                if (i >= text.length) {
-                    clearInterval(interval);
-                }
-            }, delay);
-        }
-
-        // Final render as Markdown
-        const finalHtml = marked.parse(buffer);
-
-        // Typing effect (raw text first, then Markdown)
-        typeOutText(buffer, document.getElementById("output"));
-
-        setTimeout(() => {
-            document.getElementById("output").innerHTML = finalHtml;
-        }, buffer.length * 30 + 500); // wait until typing ends
-
-        //output.innerHTML = marked.parse(buffer); // Use marked to render Markdown
+            if (i >= buffer.length) {
+              clearInterval(interval);
+              output.innerHTML = marked.parse(buffer); // final Markdown render
+            }
+        }, typingDelay);
 
       } catch (err) {
         output.textContent = `❌ Error: ${err.message}`;
