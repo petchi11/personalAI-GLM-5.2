@@ -9,7 +9,7 @@
   <textarea id="prompt" rows="4" cols="50"></textarea><br>
   <button onclick="sendPrompt()">Send</button>
   <div id="output" style="overflow-y:visible; background:#fafafa; border:1px solid #ccc; padding:10px;"></div>
-  
+
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
@@ -73,11 +73,11 @@
             const partial = buffer.slice(0, i);
             output.innerHTML = marked.parse(partial);
 
-            // Only auto-scroll if user is already near the bottom
-            const isNearBottom = output.scrollHeight - output.scrollTop - output.clientHeight < 20;
-            if (isNearBottom) {
-                output.scrollTop = output.scrollHeight;
-            }
+             // Auto-scroll the whole page
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: "smooth"
+            });
 
             if (i >= buffer.length) {
                 clearInterval(interval);
