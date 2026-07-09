@@ -16,12 +16,12 @@
       const output = document.getElementById("output");
       output.textContent = "";
 
-      const eventSource = new EventSource("/api/chat", {
+      const eventSource = new EventSource("https://personal-ai-glm-5-2.vercel.app/api/chat", {
         withCredentials: false
       });
 
       // Send prompt via POST first
-      fetch("/api/chat", {
+      fetch("https://personal-ai-glm-5-2.vercel.app/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
