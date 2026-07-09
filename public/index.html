@@ -10,7 +10,7 @@
   <button onclick="sendPrompt()">Send</button>
   <pre id="output"></pre>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  
+
   <script>
     async function sendPrompt() {
       const prompt = document.getElementById("prompt").value;
@@ -62,7 +62,31 @@
           });
         }
 
-        output.innerHTML = marked.parse(buffer); // Use marked to render Markdown
+        function typeOutText(text, outputElement, delay = 30) {
+            let i = 0;
+            outputElement.textContent = "";
+            
+            const interval = setInterval(() => {
+                outputElement.textContent += text[i];
+                i++;
+    
+                if (i >= text.length) {
+                    clearInterval(interval);
+                }
+            }, delay);
+        }
+
+        // Final render as Markdown
+        const finalHtml = marked.parse(buffer);
+
+        // Typing effect (raw text first, then Markdown)
+        typeOutText(buffer, document.getElementById("output"));
+
+        setTimeout(() => {
+            document.getElementById("output").innerHTML = finalHtml;
+        }, buffer.length * 30 + 500); // wait until typing ends
+
+        //output.innerHTML = marked.parse(buffer); // Use marked to render Markdown
 
       } catch (err) {
         output.textContent = `❌ Error: ${err.message}`;
