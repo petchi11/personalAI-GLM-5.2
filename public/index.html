@@ -74,10 +74,16 @@
             output.innerHTML = marked.parse(partial);
 
              // Auto-scroll the whole page
-            window.scrollTo({
-              top: document.body.scrollHeight,
-              behavior: "smooth"
-            });
+            // Check if user is near the bottom of the page
+            const isNearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 20;
+                    
+            if (isNearBottom) {
+              window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth"
+              });
+            }
+            
 
             if (i >= buffer.length) {
                 clearInterval(interval);
