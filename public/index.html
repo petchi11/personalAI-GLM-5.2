@@ -63,20 +63,26 @@
         }
 
         // Typing effect
-        const typingDelay = 20;
+        const typingDelay = 10;
         let i = 0;
         output.textContent = "";
         
         const interval = setInterval(() => {
-            output.textContent += buffer[i];
-            output.scrollTop = output.scrollHeight;
             i++;
-            
+            const partial = buffer.slice(0, i);
+            output.innerHTML = marked.parse(partial);
+
+            // Only auto-scroll if user is already near the bottom
+            const isNearBottom = output.scrollHeight - output.scrollTop - output.clientHeight < 20;
+            if (isNearBottom) {
+                output.scrollTop = output.scrollHeight;
+            }
+
             if (i >= buffer.length) {
-              clearInterval(interval);
-              output.innerHTML = marked.parse(buffer); // final Markdown render
+                clearInterval(interval);
             }
         }, typingDelay);
+
 
       } catch (err) {
         output.textContent = `❌ Error: ${err.message}`;
